@@ -280,10 +280,19 @@ func (r *Room) endGame() {
 
 	// Close all connections after a short delay
 	go func() {
+		r.mu.Lock()
+		defer r.mu.Unlock()
 		for _, client := range r.Clients {
 			close(client.Send)
 		}
 	}()
+}
+
+// IsFull checks if the room has reached maximum capacity
+func (r *Room) IsFull() bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return len(r.Clients) >= 2
 }
 
 func (r *Room) broadcastToAll(message []byte) {

@@ -59,7 +59,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request, manager *RoomManage
 	}
 
 	// Check if room is full
-	if len(room.Clients) >= 2 {
+	if room.IsFull() {
 		http.Error(w, "Room is full", http.StatusForbidden)
 		return
 	}
