@@ -9,8 +9,8 @@ type Card struct {
 	Type    string // "ATTACK" or "DEFENSE"
 }
 
-// CardMaster contains all available cards
-var CardMaster = []Card{
+// cardMaster contains all available cards
+var cardMaster = []Card{
 	{ID: 1, Name: "Weak Attack", Power: 10, HitRate: 90, Type: "ATTACK"},
 	{ID: 2, Name: "Medium Attack", Power: 20, HitRate: 70, Type: "ATTACK"},
 	{ID: 3, Name: "Strong Attack", Power: 30, HitRate: 50, Type: "ATTACK"},
@@ -21,12 +21,18 @@ var CardMaster = []Card{
 	{ID: 8, Name: "Ultimate Defense", Power: 20, HitRate: 20, Type: "DEFENSE"},
 }
 
+// cardMap provides O(1) lookup for cards by ID
+var cardMap = buildCardMap()
+
+func buildCardMap() map[int]*Card {
+	m := make(map[int]*Card)
+	for i := range cardMaster {
+		m[cardMaster[i].ID] = &cardMaster[i]
+	}
+	return m
+}
+
 // GetCardByID returns a card by its ID
 func GetCardByID(id int) *Card {
-	for i := range CardMaster {
-		if CardMaster[i].ID == id {
-			return &CardMaster[i]
-		}
-	}
-	return nil
+	return cardMap[id]
 }

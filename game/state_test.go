@@ -8,8 +8,8 @@ func TestNewGameState(t *testing.T) {
 	if gs.TurnCount != 0 {
 		t.Errorf("TurnCount = %d, want 0", gs.TurnCount)
 	}
-	if gs.Phase != "MATCHING" {
-		t.Errorf("Phase = %s, want MATCHING", gs.Phase)
+	if gs.Phase != PhaseMatching {
+		t.Errorf("Phase = %v, want PhaseMatching", gs.Phase)
 	}
 	if gs.Roles == nil {
 		t.Error("Roles should not be nil")

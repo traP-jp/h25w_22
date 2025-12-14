@@ -126,13 +126,13 @@ func (r *Room) handleReady(client *Client) {
 	r.Game.ReadyPlayers[client.ID] = true
 
 	switch r.Game.Phase {
-	case "MATCHING":
+	case game.PhaseMatching:
 		if r.Game.AllPlayersReady() {
 			r.startGame()
 		}
-	case "TURN_START":
+	case game.PhaseTurnStart:
 		r.checkTurnStartComplete()
-	case "TURN_END":
+	case game.PhaseTurnEnd:
 		if r.Game.AllPlayersReady() {
 			r.advanceToNextTurn()
 		}
@@ -203,7 +203,7 @@ func (r *Room) handlePlayCard(client *Client, args []string) {
 }
 
 func (r *Room) startGame() {
-	r.Game.Phase = "TURN_START"
+	r.Game.Phase = game.PhaseTurnStart
 	r.Game.TurnCount = 1
 	r.Game.ResetTurn()
 
@@ -216,7 +216,7 @@ func (r *Room) startGame() {
 }
 
 func (r *Room) startTurn() {
-	r.Game.Phase = "TURN_START"
+	r.Game.Phase = game.PhaseTurnStart
 	r.Game.ResetTurn()
 
 	// Send TURN_START to each player with their role
@@ -231,7 +231,7 @@ func (r *Room) startTurn() {
 }
 
 func (r *Room) checkTurnStartComplete() {
-	if r.Game.Phase != "TURN_START" {
+	if r.Game.Phase != game.PhaseTurnStart {
 		return
 	}
 
@@ -242,7 +242,7 @@ func (r *Room) checkTurnStartComplete() {
 }
 
 func (r *Room) startAction() {
-	r.Game.Phase = "ACTION"
+	r.Game.Phase = game.PhaseAction
 	r.Game.ReadyPlayers = make(map[string]bool)
 
 	msg, _ := MarshalEvent("ACTION_START", ActionStartPayload{MaxHP: r.Game.HP})
@@ -250,7 +250,7 @@ func (r *Room) startAction() {
 }
 
 func (r *Room) endTurn(reason string, turnScore int) {
-	r.Game.Phase = "TURN_END"
+	r.Game.Phase = game.PhaseTurnEnd
 
 	msg, _ := MarshalEvent("TURN_END", TurnEndPayload{
 		Reason:    reason,
@@ -271,7 +271,7 @@ func (r *Room) advanceToNextTurn() {
 }
 
 func (r *Room) endGame() {
-	r.Game.Phase = "GAME_END"
+	r.Game.Phase = game.PhaseGameEnd
 
 	msg, _ := MarshalEvent("GAME_RESULT", GameResultPayload{
 		FinalScores: r.Game.Scores,

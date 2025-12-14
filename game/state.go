@@ -7,10 +7,26 @@ const (
 	RoleDefense = "DEFENSE"
 )
 
+// Phase represents the current phase of the game
+type Phase int
+
+const (
+	// PhaseMatching represents the matching phase
+	PhaseMatching Phase = iota
+	// PhaseTurnStart represents the turn start phase
+	PhaseTurnStart
+	// PhaseAction represents the action/battle phase
+	PhaseAction
+	// PhaseTurnEnd represents the turn end phase
+	PhaseTurnEnd
+	// PhaseGameEnd represents the game end phase
+	PhaseGameEnd
+)
+
 // GameState represents the current state of the game
 type GameState struct {
 	TurnCount       int               // Current turn (1-4)
-	Phase           string            // Current phase: MATCHING, TURN_START, ACTION, TURN_END, GAME_END
+	Phase           Phase             // Current phase
 	Roles           map[string]string // Maps client ID to role (ATTACK or DEFENSE)
 	HP              int               // Current HP of the defender
 	ScoreMultiplier float64           // Multiplier for score calculation
@@ -25,7 +41,7 @@ type GameState struct {
 func NewGameState() *GameState {
 	return &GameState{
 		TurnCount:    0,
-		Phase:        "MATCHING",
+		Phase:        PhaseMatching,
 		Roles:        make(map[string]string),
 		Scores:       map[string]int{RoleAttack: 0, RoleDefense: 0},
 		ReadyPlayers: make(map[string]bool),

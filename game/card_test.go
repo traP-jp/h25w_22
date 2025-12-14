@@ -34,11 +34,11 @@ func TestGetCardByID(t *testing.T) {
 }
 
 func TestCardMasterData(t *testing.T) {
-	if len(CardMaster) == 0 {
-		t.Error("CardMaster should not be empty")
+	if len(cardMaster) == 0 {
+		t.Error("cardMaster should not be empty")
 	}
 
-	for _, card := range CardMaster {
+	for _, card := range cardMaster {
 		if card.ID <= 0 {
 			t.Errorf("Card %s has invalid ID: %d", card.Name, card.ID)
 		}
