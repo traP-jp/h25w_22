@@ -15,11 +15,14 @@ const (
 	// Time allowed to read the next pong message from the peer
 	pongWait = 60 * time.Second
 
-	// Send pings to peer with this period (must be less than pongWait)
-	pingPeriod = (pongWait * 9) / 10
+	// pingPeriodRatio is the ratio for calculating ping period from pong wait
+	pingPeriodRatio = 9
 
-	// Maximum message size allowed from peer
-	maxMessageSize = 512
+	// Send pings to peer with this period (must be less than pongWait)
+	pingPeriod = (pongWait * pingPeriodRatio) / 10
+
+	// channelBufferSize is the buffer size for client send channel
+	channelBufferSize = 256
 )
 
 // Client represents a WebSocket client
@@ -36,7 +39,7 @@ func NewClient(id string, conn *websocket.Conn, room *Room) *Client {
 		ID:   id,
 		Conn: conn,
 		Room: room,
-		Send: make(chan []byte, 256),
+		Send: make(chan []byte, channelBufferSize),
 	}
 }
 
@@ -44,19 +47,23 @@ func NewClient(id string, conn *websocket.Conn, room *Room) *Client {
 func (c *Client) ReadPump() {
 	defer func() {
 		c.Room.Unregister <- c
-		c.Conn.Close()
+		_ = c.Conn.Close()
 	}()
 
-	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+	_ = c.Conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.Conn.SetPongHandler(func(string) error {
-		c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+		_ = c.Conn.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
 
 	for {
 		_, message, err := c.Conn.ReadMessage()
 		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsUnexpectedCloseError(
+				err,
+				websocket.CloseGoingAway,
+				websocket.CloseAbnormalClosure,
+			) {
 				log.Printf("error: %v", err)
 			}
 			break
@@ -81,16 +88,16 @@ func (c *Client) WritePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		c.Conn.Close()
+		_ = c.Conn.Close()
 	}()
 
 	for {
 		select {
 		case message, ok := <-c.Send:
-			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The room closed the channel
-				c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+				_ = c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
 
@@ -98,13 +105,13 @@ func (c *Client) WritePump() {
 			if err != nil {
 				return
 			}
-			w.Write(message)
+			_, _ = w.Write(message)
 
 			// Add queued messages to the current WebSocket message
 			n := len(c.Send)
 			for i := 0; i < n; i++ {
-				w.Write([]byte{'\n'})
-				w.Write(<-c.Send)
+				_, _ = w.Write([]byte{'\n'})
+				_, _ = w.Write(<-c.Send)
 			}
 
 			if err := w.Close(); err != nil {
@@ -112,7 +119,7 @@ func (c *Client) WritePump() {
 			}
 
 		case <-ticker.C:
-			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}

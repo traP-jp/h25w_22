@@ -19,13 +19,18 @@ type Room struct {
 	mu         sync.Mutex
 }
 
+const (
+	maxPlayersPerRoom = 2
+	maxTurns          = 4
+)
+
 // NewRoom creates a new room
 func NewRoom(id string) *Room {
 	return &Room{
 		ID:         id,
 		Clients:    make(map[string]*Client),
 		Game:       game.NewGameState(),
-		Broadcast:  make(chan []byte, 256),
+		Broadcast:  make(chan []byte, channelBufferSize),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 	}
@@ -40,8 +45,8 @@ func (r *Room) Run() {
 			r.Clients[client.ID] = client
 
 			// Assign roles when both players join
-			if len(r.Clients) == 2 {
-				clientIDs := make([]string, 0, 2)
+			if len(r.Clients) == maxPlayersPerRoom {
+				clientIDs := make([]string, 0, maxPlayersPerRoom)
 				for id := range r.Clients {
 					clientIDs = append(clientIDs, id)
 				}
@@ -94,8 +99,10 @@ func (r *Room) HandleMessage(client *Client, cmd string, args []string) {
 	}
 }
 
+const minSelectDateArgs = 2
+
 func (r *Room) handleSelectDate(client *Client, args []string) {
-	if len(args) < 2 {
+	if len(args) < minSelectDateArgs {
 		return
 	}
 
@@ -156,7 +163,8 @@ func (r *Room) handlePlayCard(client *Client, args []string) {
 
 	role := r.Game.GetRoleForClient(client.ID)
 
-	if role == game.RoleAttack {
+	switch role {
+	case game.RoleAttack:
 		// Attacker plays a card
 		r.Game.PendingAttack = card
 		r.Game.CardsPlayed++
@@ -168,7 +176,7 @@ func (r *Room) handlePlayCard(client *Client, args []string) {
 			defender.Send <- msg
 		}
 
-	} else if role == game.RoleDefense {
+	case game.RoleDefense:
 		// Defender responds
 		if r.Game.PendingAttack == nil {
 			return
@@ -260,7 +268,7 @@ func (r *Room) endTurn(reason string, turnScore int) {
 }
 
 func (r *Room) advanceToNextTurn() {
-	if r.Game.TurnCount >= 4 {
+	if r.Game.TurnCount >= maxTurns {
 		r.endGame()
 		return
 	}
@@ -292,7 +300,7 @@ func (r *Room) endGame() {
 func (r *Room) IsFull() bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return len(r.Clients) >= 2
+	return len(r.Clients) >= maxPlayersPerRoom
 }
 
 func (r *Room) broadcastToAll(message []byte) {

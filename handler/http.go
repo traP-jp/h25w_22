@@ -9,10 +9,16 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const (
+	// WebSocket buffer sizes
+	readBufferSize  = 1024
+	writeBufferSize = 1024
+)
+
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
+	ReadBufferSize:  readBufferSize,
+	WriteBufferSize: writeBufferSize,
+	CheckOrigin: func(_ *http.Request) bool {
 		return true // Allow all origins for development
 	},
 }
@@ -32,7 +38,7 @@ func SetupRoutes(manager *RoomManager) *http.ServeMux {
 	return mux
 }
 
-func handleCreateRoom(w http.ResponseWriter, r *http.Request, manager *RoomManager) {
+func handleCreateRoom(w http.ResponseWriter, _ *http.Request, manager *RoomManager) {
 	room := manager.CreateRoom()
 
 	response := map[string]string{
@@ -40,7 +46,9 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request, manager *RoomManag
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+	}
 
 	log.Printf("Created room: %s", room.ID)
 }

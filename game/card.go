@@ -10,6 +10,8 @@ type Card struct {
 }
 
 // cardMaster contains all available cards
+//
+//nolint:mnd // Card stats are game design constants
 var cardMaster = []Card{
 	{ID: 1, Name: "Weak Attack", Power: 10, HitRate: 90, Type: "ATTACK"},
 	{ID: 2, Name: "Medium Attack", Power: 20, HitRate: 70, Type: "ATTACK"},

@@ -85,9 +85,11 @@ func (gs *GameState) GetClientByRole(role string) string {
 	return ""
 }
 
+const maxPlayers = 2
+
 // AllPlayersReady checks if all players are ready
 func (gs *GameState) AllPlayersReady() bool {
-	if len(gs.ReadyPlayers) != 2 {
+	if len(gs.ReadyPlayers) != maxPlayers {
 		return false
 	}
 	for _, ready := range gs.ReadyPlayers {

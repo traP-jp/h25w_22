@@ -9,9 +9,11 @@ const (
 	MaxCardsPerTurn = 4
 )
 
+const hitRateScale = 100
+
 // CalculateHit determines if an attack hits based on the card's hit rate
 func CalculateHit(attackCard *Card) bool {
-	return (rand.Intn(100) + 1) <= attackCard.HitRate
+	return (rand.Intn(hitRateScale) + 1) <= attackCard.HitRate
 }
 
 // CalculateDamage returns the damage amount if hit, 0 otherwise

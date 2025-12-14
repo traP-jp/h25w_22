@@ -20,7 +20,13 @@ func TestCalculateDamage(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			damage := CalculateDamage(card, tt.hit)
 			if damage != tt.wantDamage {
-				t.Errorf("CalculateDamage(%v, %v) = %d, want %d", card, tt.hit, damage, tt.wantDamage)
+				t.Errorf(
+					"CalculateDamage(%v, %v) = %d, want %d",
+					card,
+					tt.hit,
+					damage,
+					tt.wantDamage,
+				)
 			}
 		})
 	}
@@ -43,7 +49,13 @@ func TestCalculateScore(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			score := CalculateScore(tt.hp, tt.multiplier)
 			if score < tt.expectedMinimum {
-				t.Errorf("CalculateScore(%d, %f) = %d, want >= %d", tt.hp, tt.multiplier, score, tt.expectedMinimum)
+				t.Errorf(
+					"CalculateScore(%d, %f) = %d, want >= %d",
+					tt.hp,
+					tt.multiplier,
+					score,
+					tt.expectedMinimum,
+				)
 			}
 		})
 	}
