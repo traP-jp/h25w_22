@@ -50,7 +50,7 @@ type GameResultPayload struct {
 
 // OpponentDisconnectedPayload notifies that the opponent has disconnected
 type OpponentDisconnectedPayload struct {
-	Reason string `json:"reason"` // "OPPONENT_DISCONNECTED"
+	Reason string `json:"reason"` // Descriptive message (e.g., "Player disconnected")
 }
 
 // MarshalEvent converts an event to JSON bytes
