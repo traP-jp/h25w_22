@@ -1,6 +1,9 @@
 package handler
 
-import "testing"
+import (
+	"regexp"
+	"testing"
+)
 
 func TestNewRoomManager(t *testing.T) {
 	rm := NewRoomManager()
@@ -21,6 +24,12 @@ func TestCreateRoom(t *testing.T) {
 	}
 	if room.ID == "" {
 		t.Error("Room ID should not be empty")
+	}
+
+	// Verify room ID is a 4-digit number
+	matched, _ := regexp.MatchString(`^\d{4}$`, room.ID)
+	if !matched {
+		t.Errorf("Room ID should be a 4-digit number, got: %s", room.ID)
 	}
 
 	// Verify room is in manager
@@ -71,5 +80,31 @@ func TestDeleteRoom(t *testing.T) {
 	// Verify room is deleted
 	if _, ok := rm.GetRoom(room.ID); ok {
 		t.Error("Room should not exist after deletion")
+	}
+}
+
+func TestCreateRoomUniqueness(t *testing.T) {
+	rm := NewRoomManager()
+
+	// Create multiple rooms and verify they have unique IDs
+	roomIDs := make(map[string]bool)
+	const numRooms = 100
+
+	for i := 0; i < numRooms; i++ {
+		room := rm.CreateRoom()
+		if roomIDs[room.ID] {
+			t.Errorf("Duplicate room ID generated: %s", room.ID)
+		}
+		roomIDs[room.ID] = true
+
+		// Verify it's a 4-digit number
+		matched, _ := regexp.MatchString(`^\d{4}$`, room.ID)
+		if !matched {
+			t.Errorf("Room ID should be a 4-digit number, got: %s", room.ID)
+		}
+	}
+
+	if len(roomIDs) != numRooms {
+		t.Errorf("Expected %d unique room IDs, got %d", numRooms, len(roomIDs))
 	}
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"sync"
 )
 
@@ -23,8 +24,19 @@ func (rm *RoomManager) CreateRoom() *Room {
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 
-	// Generate a unique room ID
-	id := fmt.Sprintf("room_%d", len(rm.rooms)+1)
+	// Generate a unique 4-digit room ID
+	var id string
+	for {
+		// Generate a random number between 0 and 9999
+		num := rand.IntN(10000)
+		id = fmt.Sprintf("%04d", num)
+
+		// Check for collision
+		if _, exists := rm.rooms[id]; !exists {
+			break
+		}
+	}
+
 	room := NewRoom(id)
 	rm.rooms[id] = room
 
