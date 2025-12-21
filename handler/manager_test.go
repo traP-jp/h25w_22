@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+var roomIDPattern = regexp.MustCompile(`^\d{4}$`)
+
 func TestNewRoomManager(t *testing.T) {
 	rm := NewRoomManager()
 	if rm == nil {
@@ -27,8 +29,7 @@ func TestCreateRoom(t *testing.T) {
 	}
 
 	// Verify room ID is a 4-digit number
-	matched, _ := regexp.MatchString(`^\d{4}$`, room.ID)
-	if !matched {
+	if !roomIDPattern.MatchString(room.ID) {
 		t.Errorf("Room ID should be a 4-digit number, got: %s", room.ID)
 	}
 
@@ -98,8 +99,7 @@ func TestCreateRoomUniqueness(t *testing.T) {
 		roomIDs[room.ID] = true
 
 		// Verify it's a 4-digit number
-		matched, _ := regexp.MatchString(`^\d{4}$`, room.ID)
-		if !matched {
+		if !roomIDPattern.MatchString(room.ID) {
 			t.Errorf("Room ID should be a 4-digit number, got: %s", room.ID)
 		}
 	}
