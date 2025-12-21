@@ -70,7 +70,7 @@ func (r *Room) Run() {
 				// Notify the other player if they exist
 				if len(r.Clients) > 0 {
 					msg, _ := MarshalEvent("OPPONENT_DISCONNECTED", OpponentDisconnectedPayload{
-						Reason: "OPPONENT_DISCONNECTED",
+						Reason: "Player disconnected",
 					})
 					for _, remainingClient := range r.Clients {
 						select {
@@ -85,11 +85,11 @@ func (r *Room) Run() {
 				// Delete room if empty or if only one player remains
 				// (game cannot continue with one player)
 				if len(r.Clients) <= 1 {
-					r.mu.Unlock()
-					// Clean up remaining clients
+					// Clean up remaining clients while still holding the lock
 					for _, remainingClient := range r.Clients {
 						close(remainingClient.Send)
 					}
+					r.mu.Unlock()
 					// Delete the room from manager
 					if r.Manager != nil {
 						r.Manager.DeleteRoom(r.ID)
