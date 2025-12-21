@@ -13,14 +13,34 @@ type Card struct {
 //
 //nolint:mnd // Card stats are game design constants
 var cardMaster = []Card{
-	{ID: 1, Name: "Weak Attack", Power: 10, HitRate: 90, Type: "ATTACK"},
-	{ID: 2, Name: "Medium Attack", Power: 20, HitRate: 70, Type: "ATTACK"},
-	{ID: 3, Name: "Strong Attack", Power: 30, HitRate: 50, Type: "ATTACK"},
-	{ID: 4, Name: "Critical Strike", Power: 40, HitRate: 30, Type: "ATTACK"},
-	{ID: 5, Name: "Weak Defense", Power: 5, HitRate: 80, Type: "DEFENSE"},
-	{ID: 6, Name: "Medium Defense", Power: 10, HitRate: 60, Type: "DEFENSE"},
-	{ID: 7, Name: "Strong Defense", Power: 15, HitRate: 40, Type: "DEFENSE"},
-	{ID: 8, Name: "Ultimate Defense", Power: 20, HitRate: 20, Type: "DEFENSE"},
+	// Attack Cards (妨害カード)
+	{ID: 1, Name: "騒ぎ立てる", Power: 30, HitRate: 100, Type: "ATTACK"},
+	{ID: 2, Name: "ゴミをポイ捨て", Power: 30, HitRate: 100, Type: "ATTACK"},
+	{ID: 3, Name: "香水をばら撒く", Power: 30, HitRate: 60, Type: "ATTACK"},
+	{ID: 4, Name: "藁人形をばら撒く", Power: 40, HitRate: 90, Type: "ATTACK"},
+	{ID: 5, Name: "SNSに悪口を書く", Power: 40, HitRate: 100, Type: "ATTACK"},
+	{ID: 6, Name: "すれ違い様に足をかける", Power: 50, HitRate: 100, Type: "ATTACK"},
+	{ID: 7, Name: "雨乞いをする", Power: 50, HitRate: 50, Type: "ATTACK"},
+	{ID: 8, Name: "ナンパする", Power: 50, HitRate: 70, Type: "ATTACK"},
+	{ID: 9, Name: "テニスボールを投げつける", Power: 60, HitRate: 80, Type: "ATTACK"},
+	{ID: 10, Name: "Gを投げつける", Power: 60, HitRate: 70, Type: "ATTACK"},
+	{ID: 11, Name: "ひったくりをする", Power: 70, HitRate: 70, Type: "ATTACK"},
+	{ID: 12, Name: "物乞いを雇って向かわせる", Power: 80, HitRate: 70, Type: "ATTACK"},
+	{ID: 13, Name: "マジで思いつかないため保留", Power: 90, HitRate: 60, Type: "ATTACK"},
+	{ID: 14, Name: "保留", Power: 100, HitRate: 50, Type: "ATTACK"},
+	{ID: 15, Name: "保留", Power: 120, HitRate: 40, Type: "ATTACK"},
+	{ID: 16, Name: "保留", Power: 150, HitRate: 30, Type: "ATTACK"},
+	{ID: 17, Name: "保留", Power: 150, HitRate: 20, Type: "ATTACK"},
+	{ID: 18, Name: "保留", Power: 200, HitRate: 20, Type: "ATTACK"},
+	{ID: 19, Name: "保留", Power: 300, HitRate: 10, Type: "ATTACK"},
+	// Defense Cards (妨害阻止カード)
+	{ID: 20, Name: "服装を褒める", Power: 10, HitRate: 100, Type: "DEFENSE"},
+	{ID: 21, Name: "瞳を見つめる", Power: 10, HitRate: 100, Type: "DEFENSE"},
+	{ID: 22, Name: "手を繋ぐ", Power: 30, HitRate: 100, Type: "DEFENSE"},
+	{ID: 23, Name: "抱きしめる", Power: 50, HitRate: 100, Type: "DEFENSE"},
+	{ID: 24, Name: "保留", Power: 50, HitRate: 100, Type: "DEFENSE"},
+	{ID: 25, Name: "保留", Power: 80, HitRate: 100, Type: "DEFENSE"},
+	{ID: 26, Name: "保留", Power: 100, HitRate: 100, Type: "DEFENSE"},
 }
 
 // cardMap provides O(1) lookup for cards by ID
