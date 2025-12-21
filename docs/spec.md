@@ -108,6 +108,7 @@ Build a WebSocket-based game server in **Go (Golang)** for a 1-on-1 asymmetric c
 | `ACTION_RESULT` | `hit`, `currentHp` | Result of a card exchange. |
 | `TURN_END` | `reason` | Turn finished (HP=0 or Card Limit). |
 | `GAME_RESULT` | `finalScores` | Game Over (after 4 turns). |
+| `OPPONENT_DISCONNECTED` | None | Opponent has disconnected. Room will be terminated. |
 
 -----
 
@@ -170,6 +171,15 @@ Implement this flow in `handler/room.go`.
 
 1.  **Server** sends `GAME_RESULT` with final aggregated scores.
 2.  Server closes connections.
+3.  **Server deletes the room** from the room manager to free resources.
+
+### **Phase 6: Client Disconnection Handling**
+
+1.  **If a client disconnects** at any point during the game:
+    - **Server** sends `OPPONENT_DISCONNECTED` event to the remaining player.
+    - **Server** closes all remaining connections.
+    - **Server deletes the room** from the room manager.
+2.  This ensures rooms don't remain active when a player leaves unexpectedly.
 
 -----
 

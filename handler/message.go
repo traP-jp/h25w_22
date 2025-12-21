@@ -48,6 +48,9 @@ type GameResultPayload struct {
 	FinalScores map[string]int `json:"finalScores"`
 }
 
+// OpponentDisconnectedPayload notifies that the opponent has disconnected
+type OpponentDisconnectedPayload struct{}
+
 // MarshalEvent converts an event to JSON bytes
 func MarshalEvent(eventName string, payload interface{}) ([]byte, error) {
 	event := Event{
