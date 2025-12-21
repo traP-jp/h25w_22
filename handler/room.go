@@ -16,6 +16,7 @@ type Room struct {
 	Broadcast  chan []byte
 	Register   chan *Client
 	Unregister chan *Client
+	Manager    *RoomManager
 	mu         sync.Mutex
 }
 
@@ -25,7 +26,7 @@ const (
 )
 
 // NewRoom creates a new room
-func NewRoom(id string) *Room {
+func NewRoom(id string, manager *RoomManager) *Room {
 	return &Room{
 		ID:         id,
 		Clients:    make(map[string]*Client),
@@ -33,6 +34,7 @@ func NewRoom(id string) *Room {
 		Broadcast:  make(chan []byte, channelBufferSize),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
+		Manager:    manager,
 	}
 }
 
@@ -64,6 +66,36 @@ func (r *Room) Run() {
 			if _, ok := r.Clients[client.ID]; ok {
 				delete(r.Clients, client.ID)
 				close(client.Send)
+
+				// Notify the other player if they exist
+				if len(r.Clients) > 0 {
+					msg, _ := MarshalEvent("OPPONENT_DISCONNECTED", OpponentDisconnectedPayload{
+						Reason: "OPPONENT_DISCONNECTED",
+					})
+					for _, remainingClient := range r.Clients {
+						select {
+						case remainingClient.Send <- msg:
+						default:
+							close(remainingClient.Send)
+							delete(r.Clients, remainingClient.ID)
+						}
+					}
+				}
+
+				// Delete room if empty or if only one player remains
+				// (game cannot continue with one player)
+				if len(r.Clients) <= 1 {
+					r.mu.Unlock()
+					// Clean up remaining clients
+					for _, remainingClient := range r.Clients {
+						close(remainingClient.Send)
+					}
+					// Delete the room from manager
+					if r.Manager != nil {
+						r.Manager.DeleteRoom(r.ID)
+					}
+					return
+				}
 			}
 			r.mu.Unlock()
 
@@ -286,12 +318,16 @@ func (r *Room) endGame() {
 	})
 	r.broadcastToAll(msg)
 
-	// Close all connections after a short delay
+	// Close all connections and delete room after a short delay
 	go func() {
 		r.mu.Lock()
 		defer r.mu.Unlock()
 		for _, client := range r.Clients {
 			close(client.Send)
+		}
+		// Delete the room from manager
+		if r.Manager != nil {
+			r.Manager.DeleteRoom(r.ID)
 		}
 	}()
 }

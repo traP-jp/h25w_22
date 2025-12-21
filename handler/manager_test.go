@@ -108,3 +108,16 @@ func TestCreateRoomUniqueness(t *testing.T) {
 		t.Errorf("Expected %d unique room IDs, got %d", numRooms, len(roomIDs))
 	}
 }
+
+func TestRoomManagerReference(t *testing.T) {
+	rm := NewRoomManager()
+	room := rm.CreateRoom()
+
+	if room.Manager == nil {
+		t.Error("Room should have a reference to its manager")
+	}
+
+	if room.Manager != rm {
+		t.Error("Room's manager reference should point to the correct manager")
+	}
+}

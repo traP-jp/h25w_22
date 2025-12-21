@@ -42,7 +42,7 @@ func (rm *RoomManager) CreateRoom() *Room {
 		}
 	}
 
-	room := NewRoom(id)
+	room := NewRoom(id, rm)
 	rm.rooms[id] = room
 
 	// Start the room's event loop
