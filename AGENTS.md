@@ -1,4 +1,4 @@
 - **Specification Compliance:** Refer to `docs/spec.md` for the detailed project specifications, protocols, and game logic.
 - **Documentation Updates:** If you modify any logic or specifications during implementation, you **MUST** update `docs/spec.md` to reflect those changes.
 - **Testing:** Implement comprehensive unit tests.
-- **Linting & Formatting:** Ensure code adheres to Go conventions using golangci-lint.
+- **Linting & Formatting:** Ensure code adheres to Go conventions using golangci-lint. You **MUST** use golangci-lint. Other tools such as `go fmt` or `go vet` are insufficient.
