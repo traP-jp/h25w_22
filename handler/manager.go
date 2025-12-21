@@ -6,6 +6,11 @@ import (
 	"sync"
 )
 
+const (
+	// maxRoomIDValue is the maximum value for room ID generation (0-9999)
+	maxRoomIDValue = 10000
+)
+
 // RoomManager manages all game rooms
 type RoomManager struct {
 	rooms map[string]*Room
@@ -28,7 +33,7 @@ func (rm *RoomManager) CreateRoom() *Room {
 	var id string
 	for {
 		// Generate a random number between 0 and 9999
-		num := rand.IntN(10000)
+		num := rand.IntN(maxRoomIDValue)
 		id = fmt.Sprintf("%04d", num)
 
 		// Check for collision
