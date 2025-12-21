@@ -117,7 +117,7 @@ Implement this flow in `handler/room.go`.
 
 ### **Phase 1: Matching**
 
-1.  User A POSTs to `/rooms` -\> gets ID.
+1.  User A POSTs to `/rooms` -\> gets a 4-digit room ID (e.g., `0025`, `9877`).
 2.  Users connect via WS -\> **Server** sends `MATCHED`.
 3.  Clients send `READY` -\> **Server** sends `GAME_START`.
 
