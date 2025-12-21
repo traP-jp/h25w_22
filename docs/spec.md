@@ -108,7 +108,7 @@ Build a WebSocket-based game server in **Go (Golang)** for a 1-on-1 asymmetric c
 | `ACTION_RESULT` | `hit`, `currentHp` | Result of a card exchange. |
 | `TURN_END` | `reason` | Turn finished (HP=0 or Card Limit). |
 | `GAME_RESULT` | `finalScores` | Game Over (after 4 turns). |
-| `OPPONENT_DISCONNECTED` | `reason` | Opponent has disconnected. Room will be terminated. |
+| `OPPONENT_DISCONNECTED` | None | Opponent has disconnected. Room will be terminated. |
 
 -----
 

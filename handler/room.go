@@ -69,9 +69,7 @@ func (r *Room) Run() {
 
 				// Notify the other player if they exist
 				if len(r.Clients) > 0 {
-					msg, _ := MarshalEvent("OPPONENT_DISCONNECTED", OpponentDisconnectedPayload{
-						Reason: "Player disconnected",
-					})
+					msg, _ := MarshalEvent("OPPONENT_DISCONNECTED", OpponentDisconnectedPayload{})
 					for _, remainingClient := range r.Clients {
 						select {
 						case remainingClient.Send <- msg:
