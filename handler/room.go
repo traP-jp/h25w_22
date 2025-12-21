@@ -117,6 +117,8 @@ func (r *Room) HandleMessage(client *Client, cmd string, args []string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	log.Printf("Room %s: Client %s sent command: %s %v", r.ID, client.ID, cmd, args)
+
 	switch cmd {
 	case "SELECT_DATE":
 		r.handleSelectDate(client, args)
